@@ -1,4 +1,3 @@
-import pytest
 import requests
 import allure
 
@@ -9,6 +8,7 @@ URL_user = 'https://stellarburgers.nomoreparties.site/api/auth/user'
 
 class TestUserLogin:
 
+    @allure.title('Тест: Логин существующего пользователя')
     def test_login_existing_user(self, register_user_and_return_its_data):
 
         payload = register_user_and_return_its_data
@@ -17,6 +17,7 @@ class TestUserLogin:
         assert response.status_code == 200
         assert '"success":true' in response.text
 
+    @allure.title('Тест: Логин несуществующего пользователя')
     def test_login_non_existing_user(self, generate_and_return_login_password_without_registration):
 
         payload = generate_and_return_login_password_without_registration

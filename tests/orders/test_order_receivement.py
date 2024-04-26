@@ -1,4 +1,5 @@
 import requests
+import allure
 
 URL_login = 'https://stellarburgers.nomoreparties.site/api/auth/login'
 URL_orders = 'https://stellarburgers.nomoreparties.site/api/orders'
@@ -6,6 +7,7 @@ URL_orders = 'https://stellarburgers.nomoreparties.site/api/orders'
 
 class TestOrderReceivement:
 
+    @allure.title('Тест: Получение списка заказов авторизованного пользователя')
     def test_receive_orders_authorized_user(self, register_user_and_return_its_data):
 
         payload = register_user_and_return_its_data
@@ -15,6 +17,7 @@ class TestOrderReceivement:
         assert response.status_code == 200
         assert '"success":true' in response.text
 
+    @allure.title('Тест: Получение списка заказов неавторизованного пользователя')
     def test_receive_orders_unauthorized_user(self):
 
         response = requests.get(URL_orders)

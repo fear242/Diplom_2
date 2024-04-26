@@ -1,4 +1,3 @@
-import json
 import pytest
 import random
 import string
@@ -11,6 +10,8 @@ fake = Faker(['ru_RU'])
 URL_register = 'https://stellarburgers.nomoreparties.site/api/auth/register'
 URL_user = 'https://stellarburgers.nomoreparties.site/api/auth/user'
 
+
+@allure.title('Генерация строки из 10 случайных букв нижнего регистра')
 @pytest.fixture()
 def generate_random_string():
     letters = string.ascii_lowercase
@@ -33,6 +34,7 @@ def generate_and_return_login_password_without_registration(generate_random_stri
     return payload
 
 
+@allure.title('Регистрация нового пользователя и возврат его учётных данных')
 @pytest.fixture()
 def register_user_and_return_its_data(generate_and_return_login_password_without_registration):
     payload = generate_and_return_login_password_without_registration
