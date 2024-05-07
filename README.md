@@ -12,6 +12,8 @@ Diplom_2/
 │  └-orders - Наборы проверок, связанных с заказами
 │     ├-test_order_create.py - Проверки создания заказа
 │     └-test_order_receivement.py - Проверки получения списка заказов
+├-data.py - Данные для проведения тестов и assert
+├-helper.py - Вспомогательные методы
 ├-allure_results - Отчёты о тестах
 ├-conftest.py - Фикстуры
 ├-README.md - Этот файл
