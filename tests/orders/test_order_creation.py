@@ -1,19 +1,16 @@
 import requests
 import allure
-
-
-URL_orders = 'https://stellarburgers.nomoreparties.site/api/orders'
-URL_ingredients = 'https://stellarburgers.nomoreparties.site/api/ingredients'
+import helper
+from data import DataLinks, DataRespTexts
 
 
 class TestOrderCreation:
 
     @allure.title('Тест: Создание заказа с валидными ингредиентами')
     def test_order_creation_with_ingredients(self):
-
-        resp = requests.get(URL_ingredients)
+        resp = requests.get(DataLinks.URL_ingredients)
         payload = {"ingredients": [resp.json()["data"][1]["_id"]]}
-        response = requests.post(URL_orders, data=payload)
+        response = requests.post(DataLinks.URL_orders, data=payload)
 
         assert response.status_code == 200
         assert '"success":true' in response.text
@@ -21,19 +18,19 @@ class TestOrderCreation:
         # избыточным. В том числе, в документации нет упоминания об ошибке при создании заказа по API без авторизации.
 
     @allure.title('Тест: Создание заказа с невалидными ингредиентами')
-    def test_order_creation_with_wrong_hash_ingredients(self, generate_random_string):
+    def test_order_creation_with_wrong_hash_ingredients(self):
 
-        payload = {"ingredients": [f"{generate_random_string}"]}
-        response = requests.post(URL_orders, data=payload)
+        payload = {"ingredients": [f"{helper.generate_random_string()}"]}
+        response = requests.post(DataLinks.URL_orders, data=payload)
 
         assert response.status_code == 500
-        assert "Internal Server Error" in response.text
+        assert DataRespTexts.text_500 in response.text
 
     @allure.title('Создание заказа без ингредиентов')
     def test_order_creation_without_ingredients(self):
 
         payload = {"ingredients": []}
-        response = requests.post(URL_orders, data=payload)
+        response = requests.post(DataLinks.URL_orders, data=payload)
 
         assert response.status_code == 400
-        assert response.text == '{"success":false,"message":"Ingredient ids must be provided"}'
+        assert response.text == DataRespTexts.text_400_order

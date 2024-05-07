@@ -1,40 +1,38 @@
 import pytest
 import requests
 import allure
-
-
-URL_register = 'https://stellarburgers.nomoreparties.site/api/auth/register'
-URL_user = 'https://stellarburgers.nomoreparties.site/api/auth/user'
+import helper
+from data import DataLinks, DataRespTexts
 
 
 class TestUserCreation:
 
     @allure.title('Тест: Регистрация нового пользователя')
-    def test_register_new_user(self, generate_and_return_login_password_without_registration):
+    def test_register_new_user(self):
 
-        payload = generate_and_return_login_password_without_registration
-        response = requests.post(URL_register, data=payload)
+        payload = helper.generate_and_return_login_password_without_registration()
+        response = requests.post(DataLinks.URL_register, data=payload)
 
         assert response.status_code == 200
-        assert 'accessToken' in response.text
-        requests.delete(URL_user, headers={'authorization': response.json()["accessToken"]})
+        assert DataRespTexts.text_200_token in response.text
+        requests.delete(DataLinks.URL_user, headers={'authorization': response.json()["accessToken"]})
 
     @allure.title('Тест: Регистрация уже зарегистрированного пользователя')
     def test_register_similar_user(self, register_user_and_return_its_data):
 
         payload = register_user_and_return_its_data
-        response = requests.post(URL_register, data=payload)
+        response = requests.post(DataLinks.URL_register, data=payload)
 
         assert response.status_code == 403
-        assert response.text == '{"success":false,"message":"User already exists"}'
+        assert response.text == DataRespTexts.text_403_existing
 
     @allure.title('Тест: Регистрация пользователя с недостающими данными')
     @pytest.mark.parametrize('value', ["email", "password", "name"])
-    def test_register_user_with_missing_data(self, generate_and_return_login_password_without_registration, value):
+    def test_register_user_with_missing_data(self, value):
 
-        payload = generate_and_return_login_password_without_registration
+        payload = helper.generate_and_return_login_password_without_registration()
         payload[value] = ""
-        response = requests.post(URL_register, data=payload)
+        response = requests.post(DataLinks.URL_register, data=payload)
 
         assert response.status_code == 403
-        assert response.text == '{"success":false,"message":"Email, password and name are required fields"}'
+        assert response.text == DataRespTexts.text_403_missing

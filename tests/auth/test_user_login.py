@@ -1,9 +1,7 @@
 import requests
 import allure
-
-
-URL_login = 'https://stellarburgers.nomoreparties.site/api/auth/login'
-URL_user = 'https://stellarburgers.nomoreparties.site/api/auth/user'
+import helper
+from data import DataLinks, DataRespTexts
 
 
 class TestUserLogin:
@@ -12,16 +10,16 @@ class TestUserLogin:
     def test_login_existing_user(self, register_user_and_return_its_data):
 
         payload = register_user_and_return_its_data
-        response = requests.post(URL_login, data=payload)
+        response = requests.post(DataLinks.URL_login, data=payload)
 
         assert response.status_code == 200
-        assert '"success":true' in response.text
+        assert DataRespTexts.text_200_success in response.text
 
     @allure.title('Тест: Логин несуществующего пользователя')
-    def test_login_non_existing_user(self, generate_and_return_login_password_without_registration):
+    def test_login_non_existing_user(self):
 
-        payload = generate_and_return_login_password_without_registration
-        response = requests.post(URL_login, data=payload)
+        payload = helper.generate_and_return_login_password_without_registration()
+        response = requests.post(DataLinks.URL_login, data=payload)
 
         assert response.status_code == 401
-        assert response.text == '{"success":false,"message":"email or password are incorrect"}'
+        assert response.text == DataRespTexts.text_401_incorrect
